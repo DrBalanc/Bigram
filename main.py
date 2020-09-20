@@ -1,5 +1,6 @@
 import random
 import argparse
+import pickle
 
 def educ(text):
     dict = {}
@@ -12,7 +13,7 @@ def educ(text):
                   try:
                      tmp = dict.get(ls)
                      tmp.append(s)
-                     dict.update({ls + " " + s : tmp})
+                     dict.update({ls : tmp})
                   except Exception:
                      dict.update({ls : [s]})
                ls = s
@@ -20,9 +21,12 @@ def educ(text):
             else:
                 if 'а' <= j <= 'я' or 'А' <= j <= 'Я':
                     s += j
-    return dict
+    with open('educ.pickle', 'wb') as write:
+        pickle.dump(dict, write)
 
-def gen(n, dict):
+def gen(n):
+    with open('educ.pickle', 'rb') as read:
+        dict = pickle.load(read)
     now = random.choice(list(dict.keys()))
     text = open("final.txt", "w", encoding="utf8")
     for i in range(n):
@@ -38,6 +42,6 @@ def read_cmd():
     return args.n
 
 text = open("Input.txt", "r", encoding="utf8")
-dict = educ(text)
-gen(read_cmd(), dict)
+educ(text)
+gen(int(input()))
 text.close()
